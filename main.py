@@ -1,4 +1,5 @@
 import os
+import time
 import requests
 from dotenv import load_dotenv
 from datetime import datetime
@@ -28,7 +29,7 @@ def iss_overhead():
 
 
 def is_dark():
-    """ Returns true of it is currently dark in my location, false otherwise """
+    """ Returns true if it is currently dark in my location, false otherwise """
 
     parameters = {
         'lat': MY_LATITUDE,
@@ -49,4 +50,19 @@ def is_dark():
         return True
 
 
+while True:
+    # Send SMS with Twilio if ISS is overhead and it is dark
+    if iss_overhead() and is_dark():
+        account_sid = os.getenv('TWILIO_ACCOUNT_SID')
+        auth_token = os.getenv('TWILIO_AUTH_TOKEN')
+        client = Client(account_sid, auth_token)
 
+        message = client.messages.create(
+            body='Look up! The I.S.S. is overhead ☝️',
+            from_=os.getenv('MY_TWILIO_NUMBER'),
+            to=os.getenv('MY_PHONE_NUMBER')
+        )
+        print('Message sent')
+        print(message.sid)
+
+    time.sleep(60)  # execute every minute
