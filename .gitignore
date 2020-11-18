@@ -1,7 +1,6 @@
 
-.idea
 **/.idea
 
 # Environments
-venv
 **/venv
+**/.env
